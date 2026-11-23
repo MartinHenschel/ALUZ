@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ALUZ — Streetwear da Rua</title>
+    <meta
+      name="description"
+      content="ALUZ — streetwear underground inspirado na energia das ruas."
+    />
+    <link rel="stylesheet" href="styles.css?v=3" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Navegação lateral">
+        <div class="brand-row">
+          <button class="brand" type="button" aria-label="Ir para o início">
+            <img class="brand-logo" src="Logotipo_ALUZ.png" alt="ALUZ" />
+          </button>
+        </div>
+
+        <label class="search-row" for="search">
+          <span>Pesquisar</span>
+          <input id="search" type="search" aria-label="Pesquisar" />
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="6"></circle>
+            <path d="m16 16 4 4"></path>
+          </svg>
+        </label>
+
+        <nav class="sidebar-sections" aria-label="Seções da ALUZ">
+         <button class="side-section-button active" type="button" data-view="quem-somos">Quem Somos</button>
+
+          <button class="side-section-button" type="button" data-view="pronto-entrega">Produtos</button>
+
+          <button class="side-section-button" type="button" data-view="ensaio-fotos">Ensaio de Fotos</button>
+        
+        </nav>
+
+      </aside>
+
+      <main class="main-area">
+        <section class="about-view" id="about-view" aria-label="Quem Somos">
+          <div class="about-copy">
+            <p class="eyebrow">ALUZ / STREETWEAR UNDERGROUND</p>
+            <img class="about-logo" src="Logotipo_ALUZ.png" alt="Logo ALUZ" />
+            <p class="about-lede">
+              ALUZ transforma códigos da rua em peças autorais. Criada para quem vive
+              fora do padrão e encontra identidade no underground.
+            </p>
+            <div class="about-footer">
+              <span>BRASIL — 2026</span>
+              <span>DROP / CRIAÇÃO / RUINHAS</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="catalog" id="catalog-view" aria-labelledby="catalog-title" hidden>
+          <div class="catalog-heading">
+            <div>
+              <p class="eyebrow">ALUZ / DISPONÍVEL AGORA</p>
+              <h1 id="catalog-title">PRODUTOS</h1>
+            </div>
+            <p class="catalog-count"><span id="product-count">0</span> PEÇAS</p>
+          </div>
+
+            <div class="product-detail" id="product-detail" hidden aria-live="polite"></div>
+          <div class="product-grid" id="product-grid" aria-live="polite"></div>
+        </section>
+
+        <section class="photoshoot-view" id="photoshoot-view" aria-labelledby="photoshoot-title" hidden>
+          <div class="photoshoot-heading">
+            <p class="eyebrow">ALUZ / BASTIDORES</p>
+            <h1 id="photoshoot-title">ENSAIO DE FOTOS</h1>
+          </div>
+          <div class="photoshoot-gallery" aria-label="Galeria do ensaio">
+            <figure class="photoshoot-item">
+              <img src="ensaio ft 1.png" alt="Ensaio de fotos ALUZ 1" />
+              <figcaption>01</figcaption>
+            </figure>
+            <figure class="photoshoot-item">
+              <img src="ensaio ft 2.png" alt="Ensaio de fotos ALUZ 2" />
+              <figcaption>02</figcaption>
+            </figure>
+            <figure class="photoshoot-item">
+              <img src="ensaio ft 3.png" alt="Ensaio de fotos ALUZ 3" />
+              <figcaption>03</figcaption>
+            </figure>
+            <figure class="photoshoot-item">
+              <img src="ensaio foto 4.png" alt="Ensaio de fotos ALUZ 4" />
+              <figcaption>04</figcaption>
+            </figure>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="script.js?v=4"></script>
+  </body>
+</html>
