@@ -8,9 +8,22 @@
       name="description"
       content="ALUZ — streetwear underground inspirado na energia das ruas."
     />
-    <link rel="stylesheet" href="styles.css?v=3" />
+    <link rel="stylesheet" href="styles.css?v=16" />
   </head>
   <body>
+    <div id="intro" aria-hidden="true">
+      <div class="intro-glow"></div>
+      <div class="intro-flash"></div>
+      <img class="intro-logo" src="Logotipo_ALUZ_preta.png" alt="" />
+      <span class="intro-skip">clique para pular</span>
+    </div>
+    <script>
+      // já viu a intro nesta sessão? então some na hora
+      try {
+        if (sessionStorage.getItem("aluzIntro")) document.getElementById("intro").remove();
+      } catch (e) {}
+    </script>
+
     <div class="app-shell">
       <aside class="sidebar" aria-label="Navegação lateral">
         <div class="brand-row">
@@ -49,8 +62,8 @@
               fora do padrão e encontra identidade no underground.
             </p>
             <div class="about-footer">
-              <span>BRASIL — 2026</span>
-              <span>DROP / CRIAÇÃO / RUINHAS</span>
+              <span>100% BRASIL</span>
+              <span>Malandragem ainda vive</span>
             </div>
           </div>
         </section>
@@ -58,8 +71,7 @@
         <section class="catalog" id="catalog-view" aria-labelledby="catalog-title" hidden>
           <div class="catalog-heading">
             <div>
-              <p class="eyebrow">ALUZ / DISPONÍVEL AGORA</p>
-              <h1 id="catalog-title">PRODUTOS</h1>
+              <h1 id="catalog-title"><img class="catalog-title-image" src="PRODUTOS.png" alt="Produtos" /></h1>
             </div>
             <p class="catalog-count"><span id="product-count">0</span> PEÇAS</p>
           </div>
@@ -70,8 +82,7 @@
 
         <section class="photoshoot-view" id="photoshoot-view" aria-labelledby="photoshoot-title" hidden>
           <div class="photoshoot-heading">
-            <p class="eyebrow">ALUZ / BASTIDORES</p>
-            <h1 id="photoshoot-title">ENSAIO DE FOTOS</h1>
+            <h1 id="photoshoot-title"><img class="photoshoot-title-image" src="Ensaio de Fotos.png" alt="Ensaio de fotos" /></h1>
           </div>
           <div class="photoshoot-gallery" aria-label="Galeria do ensaio">
             <figure class="photoshoot-item">
@@ -95,6 +106,6 @@
       </main>
     </div>
 
-    <script src="script.js?v=4"></script>
+    <script src="script.js?v=11"></script>
   </body>
 </html>
