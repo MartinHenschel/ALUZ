@@ -1,3 +1,36 @@
+/**
+ * ALUZ — Folha de estilos (styles.css)
+ *
+ * Estilos de todo o site da ALUZ (streetwear underground): layout com barra lateral fixa,
+ * view "Quem Somos", catálogo de produtos, detalhe/medidas, ensaio de fotos e a intro animada.
+ * O visual final é preto e branco com estética punk/skate (bordas tracejadas, sombras duras,
+ * títulos inclinados em Impact).
+ *
+ * Como o arquivo está organizado (ordem de cima para baixo):
+ *  - Variáveis, reset e layout geral (app-shell + barra lateral + área principal)
+ *  - Views: Quem Somos, Ensaio de Fotos, Catálogo, Detalhe do produto e Medidas
+ *  - Bloco "Black-and-white punk skate direction": SOBRESCREVE regras anteriores (a ordem importa!)
+ *  - Media queries responsivas (1180px, 900px, 560px). Até 900px a barra lateral vira barra no topo com menu hambúrguer
+ *  - Alturas de tela cheia usam 100dvh (com 100vh logo acima como fallback): no celular o dvh acompanha a barra de endereço do navegador
+ *  - Intro animada (escuro -> clarão -> logo -> site)
+ *
+ * Main functionality:
+ *  - Definir o tema escuro e as cores base via variáveis CSS
+ *  - Estilizar os componentes gerados por index.html e por script.js (innerHTML)
+ *  - Garantir responsividade e respeitar prefers-reduced-motion na intro
+ *
+ * Atenção: vários blocos (marcados como "LEGADO") não são referenciados hoje por index.html
+ * nem por script.js. Foram mantidos de propósito (nada foi removido), mas não afetam a página.
+ */
+
+/* ===================================== SEÇÃO 1: Variáveis globais =====================================
+   --navy / --navy-deep : fundos escuros (apesar do nome, hoje são quase pretos)
+   --panel              : fundo da barra lateral
+   --line               : cor das linhas divisórias
+   --text / --muted     : cor do texto principal e do texto secundário
+   --sidebar-width      : largura da barra lateral (reduzida em telas menores, ver media queries)
+   --header-height      : altura de um cabeçalho superior (0px = não há cabeçalho hoje)
+   ====================================================================================================== */
 :root {
   --navy: #0a0a0a;
   --navy-deep: #050505;
@@ -9,10 +42,13 @@
   --header-height: 0px;
 }
 
+/* ===================================== SEÇÃO 2: Reset e base ===================================== */
+/* border-box: padding e borda entram na largura declarada, o que simplifica o cálculo dos layouts */
 * {
   box-sizing: border-box;
 }
 
+/* Página sem rolagem global (overflow: hidden): quem rola são as views internas (catálogo, ensaio) */
 html,
 body {
   width: 100%;
@@ -25,6 +61,7 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Botões e inputs herdam a fonte do site (por padrão o navegador usa uma fonte própria) */
 button,
 input {
   font: inherit;
@@ -34,22 +71,29 @@ button {
   color: inherit;
 }
 
+/* ===================================== SEÇÃO 3: Layout principal =====================================
+   Grade de duas colunas: barra lateral (largura fixa) + área principal (ocupa o resto). Altura = tela inteira. */
 .app-shell {
   display: grid;
   grid-template-columns: var(--sidebar-width) 1fr;
   width: 100%;
   height: 100vh;
+  height: 100dvh;
 }
 
+/* ===================================== SEÇÃO 4: Barra lateral ===================================== */
+/* Barra lateral: fica acima da área principal (z-index) para projetar sua sombra sobre ela */
 .sidebar {
   position: relative;
   z-index: 2;
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   background: var(--panel);
   box-shadow: 12px 0 30px rgba(0, 0, 0, 0.13);
 }
 
+/* Faixa superior com a logo da marca */
 .brand-row {
   height: 50px;
   display: flex;
@@ -57,6 +101,7 @@ button {
   border-bottom: 1px solid var(--line);
 }
 
+/* Botão da logo (clicável: volta para "Quem Somos") — sem aparência de botão padrão */
 .brand {
   display: flex;
   align-items: center;
@@ -71,6 +116,7 @@ button {
   cursor: pointer;
 }
 
+/* Logo ajustada pela altura, mantendo a proporção */
 .brand-logo {
   height: 28px;
   width: auto;
@@ -78,6 +124,7 @@ button {
   object-fit: contain;
 }
 
+/* Linha de busca: mostra o texto "Pesquisar" + ícone de lupa; o input real fica escondido até receber foco */
 .search-row {
   position: relative;
   height: 50px;
@@ -91,6 +138,7 @@ button {
   cursor: text;
 }
 
+/* O input cobre toda a linha, mas começa transparente (opacity: 0) — assim o clique em qualquer ponto da linha foca o campo */
 .search-row input {
   position: absolute;
   inset: 0;
@@ -104,6 +152,7 @@ button {
   cursor: text;
 }
 
+/* Ao focar: o input aparece por cima (z-index) com o fundo do painel e o rótulo "Pesquisar" some */
 .search-row:focus-within input {
   opacity: 1;
   z-index: 2;
@@ -114,6 +163,7 @@ button {
   opacity: 0;
 }
 
+/* Ícone de lupa posicionado no canto direito (apenas contorno, sem preenchimento) */
 .search-row svg {
   position: absolute;
   right: 18px;
@@ -124,6 +174,19 @@ button {
   stroke-width: 1.8;
 }
 
+/* Botão hambúrguer e wrapper do menu. No desktop: botão escondido e wrapper "transparente" (display: contents),
+   então a busca e a navegação continuam direto na barra lateral. O visual mobile está na SEÇÃO 11. */
+.menu-toggle {
+  display: none;
+}
+
+.sidebar-menu {
+  display: contents;
+}
+
+/* ------------------------------ LEGADO: menu em "pílulas" e lista de feed ------------------------------
+   .primary-menu, .menu-pill, .section-heading, .section-chevron e .feed-list pertenciam a uma versão
+   anterior da barra lateral. Não são usados por index.html/script.js no momento. Mantidos sem alteração. */
 .primary-menu {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -180,6 +243,7 @@ button {
 
 .feed-list {
   height: calc(100vh - 270px);
+  height: calc(100dvh - 270px);
   max-height: 465px;
   overflow-y: auto;
   scrollbar-width: thin;
@@ -193,10 +257,13 @@ button {
   overflow: hidden;
 }
 
+/* ------------------------------ Navegação por seções (em uso) ------------------------------ */
+/* Contêiner do <nav> com os três botões de seção */
 .sidebar-sections {
   border-bottom: 1px solid var(--line);
 }
 
+/* Botão de seção: ocupa toda a largura, texto alinhado à esquerda, com linha divisória no topo */
 .side-section-button {
   width: 100%;
   height: 42px;
@@ -211,12 +278,16 @@ button {
   cursor: pointer;
 }
 
+/* Hover e estado ativo (view aberta): invertem as cores — fundo claro, texto escuro */
 .side-section-button:hover,
 .side-section-button.active {
   background: #ecece8;
   color: #090b24;
 }
 
+/* ------------------------------ LEGADO: itens de feed e botão de app ------------------------------
+   .feed-item, .thumb*, .feed-copy, .feed-time, .app-download, .phone-icon e .download-copy
+   não aparecem no HTML atual. Mantidos sem alteração. */
 .feed-item {
   width: 100%;
   height: 62px;
@@ -347,13 +418,18 @@ button {
   font-size: 9px;
 }
 
+/* ===================================== SEÇÃO 5: Área principal ===================================== */
+/* Coluna da direita; position: relative serve de referência para a moldura tracejada (::before/::after) */
 .main-area {
   position: relative;
   min-width: 0;
   height: 100vh;
+  height: 100dvh;
   background: var(--navy);
 }
 
+/* Moldura decorativa dupla (duas bordas tracejadas, uma dentro da outra) desenhada sobre o conteúdo.
+   pointer-events: none faz com que ela não bloqueie cliques nos elementos que estão por baixo. */
 .main-area::before,
 .main-area::after {
   content: "";
@@ -372,6 +448,8 @@ button {
   border-color: rgba(244, 241, 232, 0.58);
 }
 
+/* ------------------------------ LEGADO: barra superior e alternador de tema ------------------------------
+   .topbar, .theme-label, .theme-toggle, .theme-button e .topnav não existem no HTML atual. Mantidos sem alteração. */
 .topbar {
   height: var(--header-height);
   display: flex;
@@ -433,24 +511,31 @@ button {
   color: #fff;
 }
 
+/* Regra essencial: garante que elementos com o atributo `hidden` realmente sumam, mesmo quando outras
+   regras definem `display` (grid, flex...). script.js usa `hidden` para alternar as views. */
 [hidden] {
   display: none !important;
 }
 
+/* ===================================== SEÇÃO 6: View "Quem Somos" ===================================== */
+/* Tela de apresentação da marca; ocupa toda a altura disponível, sem rolagem */
 .about-view {
   height: calc(100vh - var(--header-height));
+  height: calc(100dvh - var(--header-height));
   display: grid;
   grid-template-columns: 1fr;
   overflow: hidden;
   border-top: 1px solid rgba(255, 255, 255, 0.03);
 }
 
+/* Coluna de texto (position: relative para posicionar o rodapé .about-footer de forma absoluta) */
 .about-copy {
   position: relative;
   padding: 44px 50px 38px;
   border-right: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+/* Título grande da view — o HTML atual usa a logo em imagem, então esta regra hoje não tem efeito (mantida) */
 .about-copy h1 {
   max-width: 720px;
   margin: 32px 0 0;
@@ -461,6 +546,7 @@ button {
   font-weight: 400;
 }
 
+/* Logo grande da marca, em tons de cinza com contraste reforçado (filter) */
 .about-logo {
   display: block;
   width: min(390px, 72%);
@@ -469,6 +555,7 @@ button {
   filter: grayscale(1) contrast(1.3);
 }
 
+/* Frase de apresentação: caixa alta e tamanho fluido (clamp) que cresce com a largura da tela */
 .about-lede {
   max-width: 590px;
   margin: 0;
@@ -478,6 +565,7 @@ button {
   text-transform: uppercase;
 }
 
+/* Rodapé fixado na base da coluna: "100% BRASIL" à esquerda e o lema à direita, sob uma linha fina */
 .about-footer {
   position: absolute;
   bottom: 38px;
@@ -492,6 +580,7 @@ button {
   font-weight: 800;
 }
 
+/* LEGADO: painel lateral com marca (não existe no HTML atual) */
 .about-mark {
   display: grid;
   place-items: center;
@@ -507,8 +596,10 @@ button {
   object-fit: contain;
 }
 
+/* LEGADO: view "Projetos" (.projects-view, .projects-heading, .projects-empty) — não existe no HTML atual. */
 .projects-view {
   height: calc(100vh - var(--header-height));
+  height: calc(100dvh - var(--header-height));
   padding: 44px 50px;
 }
 
@@ -532,17 +623,22 @@ button {
   text-transform: uppercase;
 }
 
+/* ===================================== SEÇÃO 7: View "Ensaio de Fotos" ===================================== */
+/* Esta view rola na vertical (overflow-y: auto) quando as fotos passam da altura da tela */
 .photoshoot-view {
   height: calc(100vh - var(--header-height));
+  height: calc(100dvh - var(--header-height));
   overflow-y: auto;
   padding: 44px 50px;
 }
 
+/* Cabeçalho com o título (imagem) e a linha divisória abaixo */
 .photoshoot-heading {
   min-height: 100px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
+/* Estilo de texto do título (o HTML atual usa uma imagem dentro do h1, mas a regra permanece) */
 .photoshoot-heading h1 {
   margin: 12px 0 0;
   font-size: clamp(50px, 5.5vw, 82px);
@@ -551,6 +647,7 @@ button {
   font-weight: 400;
 }
 
+/* Imagem do título: altura fluida entre 42px e 60px, mantendo a proporção */
 .photoshoot-title-image {
   display: block;
   width: auto;
@@ -559,6 +656,7 @@ button {
   object-fit: contain;
 }
 
+/* Galeria em 2 colunas de largura mínima 220px, com 16px de espaçamento */
 .photoshoot-gallery {
   display: grid;
   grid-template-columns: repeat(2, minmax(220px, 1fr));
@@ -566,6 +664,7 @@ button {
   padding-top: 16px;
 }
 
+/* LEGADO: quadro vazio com um "X" desenhado por duas linhas cruzadas (::before/::after) — placeholder de foto */
 .photoshoot-placeholder {
   position: relative;
   aspect-ratio: 4 / 3;
@@ -597,6 +696,7 @@ button {
   font-weight: 800;
 }
 
+/* Cada foto do ensaio: proporção 4:3 e imagem preenchendo o quadro (object-fit: cover) */
 .photoshoot-item {
   position: relative;
   aspect-ratio: 4 / 3;
@@ -612,6 +712,7 @@ button {
   object-fit: cover;
 }
 
+/* Etiqueta numerada (01, 02...) no canto inferior direito da foto */
 .photoshoot-item figcaption {
   position: absolute;
   right: 12px;
@@ -627,14 +728,18 @@ button {
   font-weight: 800;
 }
 
+/* ===================================== SEÇÃO 8: View "Produtos" (catálogo) ===================================== */
+/* Contêiner do catálogo: rola na vertical; a barra de rolagem fina e discreta (scrollbar-*) combina com o tema escuro */
 .catalog {
   height: calc(100vh - var(--header-height));
+  height: calc(100dvh - var(--header-height));
   overflow-y: auto;
   padding: 28px 34px 48px 50px;
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
 
+/* Cabeçalho: título à esquerda e contador "N PEÇAS" à direita, alinhados pela base */
 .catalog-heading {
   display: flex;
   align-items: flex-end;
@@ -643,6 +748,9 @@ button {
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
+/* ------------------------------ Modo "medidas" ------------------------------
+   A classe .measure-view é adicionada por script.js (openMeasures). Ela remove bordas e
+   reduz o espaçamento superior para a tela de medidas ficar mais limpa. */
 .catalog.measure-view {
   padding-top: 20px;
 }
@@ -662,6 +770,7 @@ button {
   background: #080808;
 }
 
+/* Título da tela de medidas (nome da peça), inserido via JS no lugar do cabeçalho padrão */
 .measure-heading {
   min-height: 72px;
   display: flex;
@@ -669,6 +778,7 @@ button {
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
+/* Impact em caixa alta, levemente inclinado (skewX) e com sombra dura — identidade visual punk */
 .measure-heading h1 {
   margin: 0;
   font-family: Impact, "Arial Black", sans-serif;
@@ -680,10 +790,12 @@ button {
   text-shadow: 3px 3px 0 #3b3b3b;
 }
 
+/* Pequeno texto acima do título (não presente no HTML atual) */
 .catalog-heading .eyebrow {
   margin: 0 0 8px;
 }
 
+/* Título do catálogo; letter-spacing negativo aproxima as letras (efeito mais compacto e agressivo) */
 .catalog-heading h1 {
   margin: 0 0 17px;
   font-size: clamp(38px, 4vw, 64px);
@@ -692,6 +804,7 @@ button {
   font-weight: 400;
 }
 
+/* Imagem "PRODUTOS" usada como título */
 .catalog-title-image {
   display: block;
   width: auto;
@@ -700,6 +813,7 @@ button {
   object-fit: contain;
 }
 
+/* Contador "N PEÇAS" */
 .catalog-count {
   margin: 0 0 20px;
   color: #c9cad3;
@@ -707,6 +821,7 @@ button {
   font-weight: 700;
 }
 
+/* LEGADO: barra de filtros por categoria (.catalog-toolbar / .filter-button) — substituída pela busca na barra lateral. */
 .catalog-toolbar {
   display: flex;
   gap: 8px;
@@ -734,18 +849,23 @@ button {
   color: #101326;
 }
 
+/* ------------------------------ Lista de produtos ------------------------------
+   ATENÇÃO: .product-grid é declarado duas vezes. A primeira declaração (grade de 4 colunas) é
+   totalmente sobrescrita pela segunda (coluna única de cards horizontais). Valem as duas em ordem de cascata. */
 .product-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(150px, 1fr));
   gap: 16px;
 }
 
+/* Segunda declaração (vence a primeira): cada produto ocupa uma linha inteira, empilhados na vertical */
 .product-grid {
   display: flex;
   flex-direction: column;
   gap: 18px;
 }
 
+/* Card de produto na listagem: foto à esquerda (até 28% da largura) e informações à direita */
 .product-listing {
   height: 250px;
   display: grid;
@@ -754,7 +874,9 @@ button {
   background: rgba(4, 7, 29, 0.3);
 }
 
+/* Área da foto: fundo bege claro; a foto é centralizada e nunca cortada (object-fit: contain) */
 .listing-image {
+  position: relative; /* referência para o selo VENDIDO */
   height: 250px;
   display: grid;
   place-items: center;
@@ -772,11 +894,13 @@ button {
   object-position: center;
 }
 
+/* Tamanho do desenho placeholder dentro da listagem (usado quando o produto não tem foto) */
 .listing-image .garment {
   width: 38%;
   height: 54%;
 }
 
+/* Coluna de informações; justify-content: flex-end empurra o conteúdo para a base do card */
 .listing-info {
   position: relative;
   display: flex;
@@ -786,6 +910,7 @@ button {
   background: #080808;
 }
 
+/* Nome do produto: Impact, caixa alta e fonte fluida */
 .listing-info h2 {
   max-width: 470px;
   margin: 0 0 10px;
@@ -797,6 +922,7 @@ button {
   text-transform: uppercase;
 }
 
+/* Descrição: pre-line respeita as quebras de linha (\n) escritas em script.js */
 .product-description {
   margin: 0 0 14px;
   color: #d7d6cf;
@@ -805,10 +931,12 @@ button {
   white-space: pre-line;
 }
 
+/* Rodapé do card (cor e preço) ocupando toda a largura */
 .listing-info .detail-meta {
   width: 100%;
 }
 
+/* Botões em formato de pílula ("VER PRODUTO" e "VER MEDIDAS"): contorno que vira preenchido no hover */
 .measure-button,
 .product-open-button {
   align-self: flex-start;
@@ -831,11 +959,13 @@ button {
   color: #080808;
 }
 
+/* Aparência de botão desabilitado (esmaecido, sem cursor de clique) */
 .measure-button:disabled {
   opacity: 0.35;
   cursor: default;
 }
 
+/* Linha de botões do card; flex-wrap permite quebrar para a linha de baixo em telas estreitas */
 .listing-actions {
   display: flex;
   flex-wrap: wrap;
@@ -848,6 +978,7 @@ button {
   margin: 0;
 }
 
+/* Botão de compra: link estilizado como pílula, na cor verde do WhatsApp (#25d366); no hover fica preenchido */
 .whatsapp-button {
   align-self: flex-start;
   display: inline-flex;
@@ -868,6 +999,43 @@ button {
   color: #080808;
 }
 
+/* ------------------------------ Peça vendida ------------------------------
+   Aplicado por script.js quando o produto tem soldOut: true. */
+
+/* Botão desativado no lugar de "COMPRAR PELO WHATSAPP": cinza, sem hover e sem cursor de clique */
+.whatsapp-button.is-sold-out,
+.whatsapp-button.is-sold-out:hover {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: transparent;
+  color: #a7a49b;
+  cursor: not-allowed;
+}
+
+/* Selo no canto da foto */
+.sold-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
+  padding: 5px 10px;
+  background: #080808;
+  color: #f4f1e8;
+  font-family: Impact, "Arial Black", sans-serif;
+  font-size: 13px;
+  letter-spacing: 1px;
+  line-height: 1;
+}
+
+/* Foto esmaecida e em preto e branco */
+.product-listing.is-sold-out .listing-image img,
+.detail-image.is-sold-out img {
+  opacity: 0.6;
+  filter: grayscale(1);
+}
+
+/* ------------------------------ LEGADO: cards em grade ------------------------------
+   .product-card, .product-image, .product-info, .product-copy e .product-price eram usados na grade antiga
+   (script.js hoje gera .product-listing). Mantidos sem alteração. */
 .product-card {
   min-width: 0;
   border: 1px solid rgba(255, 255, 255, 0.09);
@@ -896,6 +1064,11 @@ button {
   object-position: center;
 }
 
+/* ------------------------------ Placeholder de peça (desenho CSS) ------------------------------
+   Quando um produto não tem foto, script.js desenha uma silhueta de roupa com o texto "ALUZ".
+   A classe base .garment é um retângulo; modificadores por categoria (garment-shirt, -polo, -jaqueta, -calca)
+   recortam a forma com clip-path. As categorias atuais ("camiseta", "acessório", "casaco") não têm modificador próprio,
+   então usam a forma base. */
 .garment {
   position: relative;
   width: 60%;
@@ -924,6 +1097,7 @@ button {
   transform: skewY(-12deg);
 }
 
+/* Camiseta/polo: clip-path desenha o contorno com mangas e gola (polygon com pontos em %) */
 .garment-shirt,
 .garment-polo {
   clip-path: polygon(23% 8%, 38% 0, 62% 0, 77% 8%, 100% 18%, 88% 48%, 75% 42%, 75% 100%, 25% 100%, 25% 42%, 12% 48%, 0 18%);
@@ -938,6 +1112,7 @@ button {
   background: #d9d7ce;
 }
 
+/* Jaqueta: corpo mais comprido e mangas mais longas */
 .garment-jaqueta {
   width: 58%;
   height: 74%;
@@ -945,6 +1120,7 @@ button {
   background: #343943;
 }
 
+/* Calça: duas pernas separadas por um recorte em V na parte de baixo */
 .garment-calca {
   width: 44%;
   height: 82%;
@@ -952,11 +1128,13 @@ button {
   background: #252936;
 }
 
+/* Desliga as "mangas" feitas com pseudo-elementos (definidas acima); a forma final usa só o clip-path */
 .garment::before,
 .garment::after {
   display: none;
 }
 
+/* Texto "ALUZ" estampado no centro da silhueta */
 .garment-label {
   position: absolute;
   inset: 42% 10% auto;
@@ -974,6 +1152,7 @@ button {
   color: #191c25;
 }
 
+/* LEGADO: texto dos cards da grade antiga (.product-info / .product-copy / .product-price). */
 .product-info {
   min-height: 82px;
   display: grid;
@@ -1014,6 +1193,7 @@ button {
   white-space: nowrap;
 }
 
+/* Mensagem "Nenhuma peça encontrada." exibida quando a busca não retorna resultados */
 .empty-state {
   grid-column: 1 / -1;
   margin: 40px 0;
@@ -1022,6 +1202,8 @@ button {
   text-align: center;
 }
 
+/* ===================================== SEÇÃO 9: Detalhe do produto e medidas ===================================== */
+/* Painel de duas colunas (foto ~58% + informações). Começa oculto; a classe .visible (adicionada por JS) ativa o display: grid */
 .product-detail {
   min-height: 520px;
   grid-template-columns: minmax(360px, 58%) 1fr;
@@ -1029,10 +1211,12 @@ button {
   background: rgba(4, 7, 29, 0.3);
 }
 
+/* Só vira grid quando visível — a regra [hidden] acima garante que fique escondido no resto do tempo */
 .product-detail.visible {
   display: grid;
 }
 
+/* Coluna da galeria: foto principal em cima e miniaturas embaixo */
 .detail-gallery {
   min-width: 0;
   display: flex;
@@ -1040,7 +1224,9 @@ button {
   background: #f0f0ec;
 }
 
+/* Foto principal do detalhe (também usada para a imagem de medidas) */
 .detail-image {
+  position: relative; /* referência para o selo VENDIDO */
   min-height: 520px;
   display: grid;
   place-items: center;
@@ -1055,11 +1241,13 @@ button {
   object-fit: contain;
 }
 
+/* Tamanho do desenho placeholder na tela de detalhe */
 .detail-image .garment {
   width: 52%;
   height: 62%;
 }
 
+/* Faixa de miniaturas, centralizada e rolável na horizontal quando há muitas fotos */
 .detail-thumbnails {
   display: flex;
   justify-content: center;
@@ -1069,6 +1257,7 @@ button {
   background: #e8e5dc;
 }
 
+/* Miniatura clicável: semitransparente por padrão */
 .detail-thumbnail {
   width: 64px;
   height: 64px;
@@ -1080,6 +1269,7 @@ button {
   opacity: 0.7;
 }
 
+/* Miniatura selecionada (ou sob o mouse): opacidade total e borda escura */
 .detail-thumbnail.active,
 .detail-thumbnail:hover {
   border-color: #080808;
@@ -1093,6 +1283,7 @@ button {
   object-fit: cover;
 }
 
+/* Coluna de informações; padding-top grande abre espaço para o botão "voltar" posicionado de forma absoluta */
 .detail-info {
   position: relative;
   display: flex;
@@ -1101,6 +1292,7 @@ button {
   padding: 74px 38px 42px;
 }
 
+/* Botão "‹ Todas as peças" / "‹ Voltar ao produto" fixado no canto superior esquerdo da coluna */
 .detail-back {
   position: absolute;
   top: 24px;
@@ -1116,6 +1308,7 @@ button {
   cursor: pointer;
 }
 
+/* Linha pequena "categoria / cor" acima do nome */
 .detail-category {
   margin: 0 0 6px;
   color: #aeb1c2;
@@ -1124,6 +1317,7 @@ button {
   text-transform: uppercase;
 }
 
+/* Nome do produto no detalhe: caixa alta, tamanho fluido */
 .detail-info h2 {
   max-width: 420px;
   margin: 0 0 10px;
@@ -1134,6 +1328,7 @@ button {
   text-transform: uppercase;
 }
 
+/* Descrição no detalhe: texto um pouco maior e com mais espaçamento entre linhas que na listagem */
 .detail-info .product-description {
   margin: 0 0 16px;
   font-size: 12px;
@@ -1148,6 +1343,7 @@ button {
   margin-top: 0;
 }
 
+/* Rodapé com cor (esquerda) e preço (direita), separado por uma linha no topo */
 .detail-meta {
   display: flex;
   justify-content: space-between;
@@ -1159,13 +1355,15 @@ button {
   font-weight: 700;
 }
 
+/* Tabela de medidas: uma coluna por tamanho (script.js define --cols, até 4 por linha), cada uma com as medidas em cm */
 .measure-table {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr));
   gap: 8px;
   margin: 2px 0 16px;
 }
 
+/* Cada célula = um tamanho */
 .measure-table div {
   display: grid;
   gap: 5px;
@@ -1174,6 +1372,7 @@ button {
   background: rgba(255, 255, 255, 0.03);
 }
 
+/* Letra do tamanho (P, M, G, GG) em destaque */
 .measure-table span {
   margin-bottom: 2px;
   font-family: Impact, "Arial Black", sans-serif;
@@ -1187,6 +1386,8 @@ button {
   line-height: 1.3;
 }
 
+/* ------------------------------ LEGADO: modo claro (body.light-mode) ------------------------------
+   Nenhum elemento ativa a classe .light-mode hoje (não há alternador de tema no HTML). Regras mantidas sem alteração. */
 body.light-mode .catalog-heading,
 body.light-mode .filter-button,
 body.light-mode .product-card {
@@ -1207,7 +1408,12 @@ body.light-mode .filter-button.active {
   color: #fff;
 }
 
+/* ===================================== SEÇÃO 10: Tema preto e branco (punk / skate) =====================================
+   Este bloco vem DEPOIS das regras acima e as SOBRESCREVE (mesma especificidade -> vence a última declarada).
+   Por isso, para entender a aparência final de um componente, leia também o que está aqui.
+   ======================================================================================================================== */
 /* Black-and-white punk skate direction */
+/* Fundo preto com textura sutil: pontinhos (radial-gradient) + uma linha diagonal quase invisível */
 body {
   background-color: #080808;
   background-image:
@@ -1216,6 +1422,7 @@ body {
   background-size: 5px 5px, 100% 100%;
 }
 
+/* Barra lateral em cinza quase preto, com bordas brancas translúcidas */
 .sidebar,
 .app-download {
   background: #101010;
@@ -1226,10 +1433,12 @@ body {
   background: #080808;
 }
 
+/* Logo em escala de cinza com mais contraste */
 .brand-logo {
   filter: grayscale(1) contrast(1.25);
 }
 
+/* Todas as linhas divisórias passam a ter a mesma cor translúcida */
 .search-row,
 .primary-menu,
 .sidebar-sections,
@@ -1246,6 +1455,7 @@ body {
   position: relative;
 }
 
+/* Linha tracejada decorativa sob os cabeçalhos: gradiente repetido com 9px de traço e 8px de vão */
 .catalog-heading::after,
 .projects-heading::after,
 .photoshoot-heading::after {
@@ -1263,6 +1473,7 @@ body {
   opacity: 0.8;
 }
 
+/* Botões do menu: sem cantos arredondados, texto em caixa alta e fundo transparente */
 .menu-pill,
 .side-section-button,
 .section-heading {
@@ -1293,6 +1504,7 @@ body {
   background: #1d1d1d;
 }
 
+/* Fonte de impacto (Impact) para títulos e textos de destaque */
 .eyebrow,
 .catalog-heading h1,
 .projects-heading h1,
@@ -1303,6 +1515,7 @@ body {
   text-transform: uppercase;
 }
 
+/* Efeito "cartaz": texto inclinado (skewX) com sombra dura deslocada (3px 3px sem blur) */
 .catalog-heading h1,
 .projects-heading h1,
 .photoshoot-heading h1,
@@ -1337,6 +1550,7 @@ body {
   border-left-color: #080808;
 }
 
+/* Cantos retos e sombra dura branca deslocada (5px 5px) — visual de colagem/zine */
 .product-card,
 .product-detail,
 .photoshoot-item {
@@ -1355,6 +1569,7 @@ body {
   background: #e8e5dc;
 }
 
+/* Fotos do ensaio levemente tortas: pares giram +1°, ímpares -1°; no hover endireitam e aumentam um pouco */
 .photoshoot-item:nth-child(even) {
   transform: rotate(1deg);
 }
@@ -1373,6 +1588,7 @@ body {
   background: #080808;
 }
 
+/* Ajustes do modo claro (LEGADO — a classe .light-mode não é aplicada hoje) */
 body.light-mode .product-card {
   background: rgba(255, 255, 255, 0.3);
 }
@@ -1388,37 +1604,11 @@ body.light-mode .detail-meta {
   color: #171927;
 }
 
+/* ===================================== SEÇÃO 11: Responsividade ===================================== */
+/* Telas até 1180px */
 @media (max-width: 1180px) {
   .product-grid {
     grid-template-columns: repeat(3, minmax(150px, 1fr));
-  }
-
-  @media (max-width: 900px) {
-    :root {
-      --sidebar-width: 180px;
-    }
-
-    .catalog {
-      padding: 20px 18px 40px;
-    }
-
-    .product-listing {
-      height: 220px;
-      grid-template-columns: 38% 1fr;
-    }
-
-    .listing-image {
-      height: 220px;
-    }
-
-    .listing-info {
-      padding: 16px;
-    }
-
-    .listing-info h2 {
-      font-size: clamp(18px, 5vw, 28px);
-      letter-spacing: -1px;
-    }
   }
 
   .catalog {
@@ -1426,7 +1616,263 @@ body.light-mode .detail-meta {
   }
 }
 
+/* ---------------------------------------------------------------------------------------------------
+   Telas até 900px (celulares e tablets): LAYOUT MOBILE
+   A barra lateral vira uma barra no topo (logo + botão hambúrguer). Busca e seções ficam num painel
+   que abre sob a barra quando script.js adiciona a classe "menu-open" na .sidebar.
+   Se mudar este breakpoint, mude também MOBILE_MENU_QUERY em script.js.
+   --------------------------------------------------------------------------------------------------- */
 @media (max-width: 900px) {
+  /* Uma coluna só: barra do topo (altura automática) + área principal ocupando o resto da tela */
+  .app-shell {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  /* overflow: visible deixa o painel do menu "sair" da barra; z-index maior que a moldura tracejada (z-index 8) */
+  .sidebar {
+    height: auto;
+    overflow: visible;
+    z-index: 30;
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+  }
+
+  .brand-row {
+    height: 56px;
+    justify-content: space-between;
+    padding-right: 8px;
+    border-bottom: 0;
+  }
+
+  .brand {
+    padding: 0 16px;
+  }
+
+  .brand-logo {
+    height: 30px;
+  }
+
+  /* Botão hambúrguer: 44x44px (tamanho mínimo confortável para toque) com 3 barras */
+  .menu-toggle {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .menu-toggle:focus-visible {
+    outline: 2px solid #f4f1e8;
+    outline-offset: 2px;
+  }
+
+  .menu-toggle-bar {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: #f4f1e8;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  /* Aberto: as 3 barras viram um "X" (centros 7px afastados = 2px de barra + 5px de gap) */
+  .sidebar.menu-open .menu-toggle-bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .sidebar.menu-open .menu-toggle-bar:nth-child(2) {
+    opacity: 0;
+  }
+
+  .sidebar.menu-open .menu-toggle-bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  /* Painel do menu: escondido por padrão; aparece logo abaixo da barra, por cima do conteúdo */
+  .sidebar-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: calc(100vh - 56px);
+    max-height: calc(100dvh - 56px);
+    overflow-y: auto;
+    background: var(--panel);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 18px 30px rgba(0, 0, 0, 0.55);
+  }
+
+  .sidebar.menu-open .sidebar-menu {
+    display: block;
+  }
+
+  /* Itens do menu maiores: texto de 13px e altura de 52px */
+  .search-row {
+    height: 52px;
+    padding-left: 16px;
+    font-size: 13px;
+  }
+
+  .search-row input {
+    padding-left: 16px;
+    font-size: 16px; /* 16px evita o zoom automático do iOS ao focar o campo */
+  }
+
+  .sidebar-sections {
+    border-bottom: 0;
+  }
+
+  .side-section-button {
+    height: 52px;
+    padding: 0 16px;
+    font-size: 13px;
+  }
+
+  /* Área principal: ocupa a linha 1fr da grade (a altura vem do grid, não mais de 100vh) */
+  .main-area {
+    height: auto;
+    min-height: 0;
+  }
+
+  /* Moldura tracejada mais fina/próxima da borda para sobrar espaço ao conteúdo */
+  .main-area::before {
+    inset: 6px;
+  }
+
+  .main-area::after {
+    inset: 12px;
+  }
+
+  /* As três views passam a ter 100% da altura da área principal */
+  .about-view,
+  .catalog,
+  .photoshoot-view {
+    height: 100%;
+  }
+
+  /* Quem Somos: rola se a tela for baixa; o rodapé fica na base quando há espaço */
+  .about-view {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .about-copy {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    padding: 30px 28px 28px;
+    border-right: 0;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+  }
+
+  .about-logo {
+    width: min(320px, 80%);
+    margin: 24px 0 28px;
+  }
+
+  .about-lede {
+    margin-bottom: 32px;
+    font-size: 15px;
+  }
+
+  .about-footer {
+    position: static;
+    margin-top: auto;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    font-size: 11px;
+  }
+
+  /* Ensaio de Fotos */
+  .photoshoot-view {
+    padding: 28px 28px 40px;
+    overflow-x: hidden; /* as fotos levemente giradas poderiam gerar rolagem horizontal */
+  }
+
+  .photoshoot-heading {
+    min-height: 72px;
+  }
+
+  .photoshoot-item figcaption {
+    font-size: 11px;
+  }
+
+  /* Catálogo */
+  .catalog {
+    padding: 28px 28px 48px;
+  }
+
+  .catalog-heading {
+    min-height: 72px;
+  }
+
+  /* Cards: altura se ajusta ao conteúdo (botões de 44px podem quebrar de linha) */
+  .product-listing {
+    height: auto;
+    min-height: 220px;
+    grid-template-columns: 38% 1fr;
+  }
+
+  /* A foto preenche a célula inteira sem influenciar a altura do card */
+  .listing-image {
+    position: relative;
+    height: auto;
+    min-height: 220px;
+  }
+
+  .listing-image img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .listing-info {
+    padding: 16px;
+  }
+
+  .listing-info h2 {
+    font-size: clamp(18px, 5vw, 28px);
+    letter-spacing: -1px;
+  }
+
+  .product-description {
+    font-size: 12px;
+  }
+
+  .detail-category {
+    font-size: 10px;
+  }
+
+  /* Botões com texto legível e área de toque de 44px */
+  .measure-button,
+  .product-open-button {
+    height: 44px;
+    font-size: 11px;
+  }
+
+  .whatsapp-button {
+    min-height: 44px;
+    font-size: 11px;
+  }
+
+  /* Detalhe do produto: 1 coluna (foto em cima, informações embaixo) */
+  .product-detail {
+    min-height: 0;
+  }
+
   .product-detail.visible {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -1436,23 +1882,56 @@ body.light-mode .detail-meta {
   }
 
   .detail-info {
-    padding: 74px 22px 30px;
+    padding: 80px 22px 30px;
   }
 
   .detail-back {
+    top: 16px;
     left: 22px;
+    height: 44px;
+    font-size: 12px;
+  }
+
+  .detail-thumbnail {
+    width: 56px;
+    height: 56px;
+    flex-basis: 56px;
+  }
+
+  .measure-heading h1 {
+    font-size: clamp(26px, 8vw, 38px);
+    letter-spacing: -2px;
+  }
+
+  .measure-table strong {
+    font-size: 10px;
   }
 }
 
+/* Celulares (até 560px) */
 @media (max-width: 560px) {
+  .catalog {
+    padding: 26px 26px 44px;
+  }
+
+  .photoshoot-view {
+    padding: 26px 26px 36px;
+  }
+
+  .about-copy {
+    padding: 28px 26px 26px;
+  }
+
+  /* Ensaio em uma coluna */
+  .photoshoot-gallery {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .product-listing {
-    height: auto;
-    min-height: 220px;
     grid-template-columns: 35% minmax(0, 1fr);
   }
 
   .listing-image {
-    height: 100%;
     min-height: 220px;
   }
 
@@ -1466,17 +1945,34 @@ body.light-mode .detail-meta {
 
   .listing-actions .product-open-button,
   .listing-actions .whatsapp-button {
-    padding: 0 9px;
-    font-size: 8px;
+    padding: 0 12px;
+    font-size: 11px;
   }
 
   .detail-gallery .detail-image {
     min-height: 300px;
   }
+
+  /* Tabela de medidas em 2 colunas (P/M e G/GG) para caber no celular */
+  .measure-table {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
+/* Quem prefere menos movimento: o hambúrguer muda de forma sem animação */
+@media (prefers-reduced-motion: reduce) {
+  .menu-toggle-bar {
+    transition: none;
+  }
+}
+
+/* ===================================== LEGADO: layout antigo da home (hero) =====================================
+   .hero, .story-copy, .eyebrow (esta ainda é usada), .lede, .story-meta, .shirt-wrap, .shirt e o modo claro (:root da
+   body.light-mode) pertenciam à página inicial anterior. Não são usados pelo HTML atual; mantidos sem alteração.
+   ================================================================================================================ */
 .hero {
   height: calc(100vh - var(--header-height));
+  height: calc(100dvh - var(--header-height));
   display: grid;
   grid-template-columns: 60% 40%;
   padding: 0 86px 0 50px;
@@ -1489,6 +1985,7 @@ body.light-mode .detail-meta {
   padding-top: 26px;
 }
 
+/* ATENÇÃO: .eyebrow É usado hoje (texto "ALUZ / STREETWEAR UNDERGROUND" em Quem Somos) */
 .eyebrow {
   margin: 0 0 12px;
   color: #d0d1da;
@@ -1544,6 +2041,7 @@ body.light-mode .detail-meta {
 .product-card {
   align-self: start;
   height: min(545px, calc(100vh - 186px));
+  height: min(545px, calc(100dvh - 186px));
   min-height: 430px;
   margin-top: 0;
   display: grid;
@@ -1567,6 +2065,7 @@ body.light-mode .detail-meta {
   display: block;
 }
 
+/* Variáveis do modo claro (LEGADO) */
 body.light-mode {
   --panel: #ecece7;
   --line: rgba(0, 0, 0, 0.09);
@@ -1602,6 +2101,7 @@ body.light-mode .menu-pill:hover {
   color: #fff;
 }
 
+/* Ajustes de altura para o layout antigo (.hero) em telas baixas (LEGADO) */
 @media (max-height: 760px) {
   .hero {
     padding-right: 70px;
@@ -1617,10 +2117,12 @@ body.light-mode .menu-pill:hover {
 
   .product-card {
     height: calc(100vh - 130px);
+    height: calc(100dvh - 130px);
   }
 }
 
 /* ===== Intro: escuro -> clarão de farol -> logo -> site ===== */
+/* Camada que cobre a tela inteira (position: fixed, z-index altíssimo). Fundo preto; clicar nela pula a intro */
 #intro {
   position: fixed;
   inset: 0;
@@ -1633,6 +2135,7 @@ body.light-mode .menu-pill:hover {
   transition: opacity 0.9s ease, visibility 0.9s;
 }
 
+/* Estado de saída (classe adicionada por endIntro() em script.js): fade-out e deixa de receber cliques */
 #intro.sai {
   opacity: 0;
   visibility: hidden;
@@ -1640,6 +2143,7 @@ body.light-mode .menu-pill:hover {
 }
 
 /* brilho que vem de longe e cresce, tipo farol se aproximando */
+/* Sequência da intro: 1) .intro-glow cresce (0.4s) -> 2) .intro-flash estoura (1.2s) -> 3) .intro-logo surge (2.2s) -> 4) .intro-skip aparece (2.4s) */
 .intro-glow {
   position: absolute;
   left: 50%;
@@ -1662,6 +2166,7 @@ body.light-mode .menu-pill:hover {
   animation: introFlash 1.6s ease-out 1.2s forwards;
 }
 
+/* Logo: começa desfocada e transparente (blur 22px) e vai ficando nítida durante a animação introLogo */
 .intro-logo {
   position: relative;
   width: min(380px, 62vw);
@@ -1672,6 +2177,7 @@ body.light-mode .menu-pill:hover {
   animation: introLogo 1.8s ease-in-out 2.2s forwards;
 }
 
+/* Texto "clique para pular" na base da tela; surge com atraso (animation-delay de 2.4s) */
 .intro-skip {
   position: absolute;
   bottom: 28px;
@@ -1687,12 +2193,14 @@ body.light-mode .menu-pill:hover {
   animation: introSkip 0.6s ease 2.4s forwards;
 }
 
+/* Keyframes do brilho: aparece pequeno e vai crescendo até 2.2x, como um farol se aproximando */
 @keyframes introGlow {
   0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.05); }
   30%  { opacity: 0.9; }
   100% { opacity: 1; transform: translate(-50%, -50%) scale(2.2); }
 }
 
+/* Keyframes do clarão: sobe para 100% de opacidade quase na hora e apaga gradualmente */
 @keyframes introFlash {
   0%   { opacity: 0; }
   8%   { opacity: 1; }
@@ -1701,6 +2209,7 @@ body.light-mode .menu-pill:hover {
   100% { opacity: 0; }
 }
 
+/* Keyframes da logo: de borrada com brilho forte (drop-shadow) até nítida e sem brilho */
 @keyframes introLogo {
   0%   { opacity: 0; transform: scale(0.94); filter: blur(22px) drop-shadow(0 0 38px rgba(255, 255, 255, 0.95)); }
   30%  { opacity: 1; filter: blur(16px) drop-shadow(0 0 30px rgba(255, 255, 255, 0.85)); }
@@ -1708,10 +2217,12 @@ body.light-mode .menu-pill:hover {
   100% { opacity: 1; transform: scale(1); filter: blur(0) drop-shadow(0 0 0 transparent); }
 }
 
+/* Keyframes do aviso de pular: apenas aparece (to = estado final) */
 @keyframes introSkip {
   to { opacity: 1; }
 }
 
+/* Acessibilidade: para quem prefere menos movimento, remove as animações e mostra a logo estática */
 @media (prefers-reduced-motion: reduce) {
   .intro-glow,
   .intro-flash {
