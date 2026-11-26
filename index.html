@@ -9,7 +9,8 @@
    - Intro animada de abertura (#intro), exibida uma vez por sessão
    - Barra lateral com logo, campo de busca e navegação entre as seções
    - Em telas até 900px a barra lateral vira uma barra no topo, com botão hambúrguer (.menu-toggle) que abre o menu (#sidebar-menu)
-   - Três views alternadas por script.js: "Quem Somos", "Produtos" e "Ensaio de Fotos"
+   - Quatro views alternadas por script.js: "Quem Somos", "Produtos", "Ensaio de Fotos" e "Informações"
+   - Contatos (#sidebar-contact) e conteúdo de "Informações" (#info-content) são montados por script.js a partir de SITE_INFO
    - Contêineres vazios (#product-grid e #product-detail) preenchidos dinamicamente com os produtos
 
   Arquivos relacionados:
@@ -28,8 +29,23 @@
       name="description"
       content="ALUZ — streetwear underground inspirado na energia das ruas."
     />
+    <!-- Cor da barra do navegador no celular -->
+    <meta name="theme-color" content="#080808" />
+    <!-- Ícone da aba do navegador (favicon.svg: um "A" branco sobre fundo preto) -->
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <!-- Prévia ao compartilhar o link (WhatsApp, Instagram, Telegram...) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="ALUZ" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:title" content="ALUZ — Streetwear da Rua" />
+    <meta property="og:description" content="ALUZ — streetwear underground inspirado na energia das ruas." />
+    <!-- QUANDO O SITE TIVER ENDEREÇO (domínio): descomente as linhas abaixo e troque pelas URLs completas.
+         O og:image precisa ser um endereço absoluto (https://...) de uma imagem de uns 1200x630 px; sem ele, a prévia mostra só título e texto. -->
+    <!-- <meta property="og:url" content="https://SEU-DOMINIO.com.br/" /> -->
+    <!-- <meta property="og:image" content="https://SEU-DOMINIO.com.br/fotos/og-aluz.jpg" /> -->
+    <!-- <meta name="twitter:card" content="summary_large_image" /> -->
     <!-- Folha de estilos; o "?v=16" é um número de versão para forçar o navegador a recarregar o CSS após mudanças -->
-    <link rel="stylesheet" href="styles.css?v=18" />
+    <link rel="stylesheet" href="styles.css?v=19" />
   </head>
   <body>
     <!-- ================================= INTRO: animação de abertura ================================= -->
@@ -87,7 +103,12 @@
 
           <button class="side-section-button" type="button" data-view="ensaio-fotos">Ensaio de Fotos</button>
 
+          <button class="side-section-button" type="button" data-view="informacoes">Informações</button>
+
         </nav>
+
+        <!-- Contato fixo (WhatsApp e, se configurado, Instagram): preenchido por renderStoreInfo() em script.js -->
+        <div class="sidebar-contact" id="sidebar-contact"></div>
         </div>
 
       </aside>
@@ -151,10 +172,18 @@
             </figure>
           </div>
         </section>
+
+        <!-- VIEW 4 — Informações: como comprar, pagamento, envio e trocas (conteúdo vem de SITE_INFO em script.js) -->
+        <section class="info-view" id="info-view" aria-labelledby="info-title" hidden>
+          <div class="info-heading">
+            <h1 id="info-title">Informações</h1>
+          </div>
+          <div class="info-content" id="info-content"></div>
+        </section>
       </main>
     </div>
 
     <!-- Lógica do site; carregado no fim do body para que todos os elementos acima já existam. "?v=12" = versão para limpar o cache -->
-    <script src="script.js?v=14"></script>
+    <script src="script.js?v=15"></script>
   </body>
 </html>

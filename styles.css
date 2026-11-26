@@ -623,6 +623,128 @@ button {
   text-transform: uppercase;
 }
 
+/* ===================================== SEÇÃO 6.1: View "Informações" e contato da barra lateral ===================================== */
+/* Contato fixo no fim da barra lateral (no celular vira o último item do painel do menu; ver media query de 900px) */
+.sidebar-contact {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 16px 20px 20px;
+  border-top: 1px solid var(--line);
+}
+
+.sidebar-contact-title {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.sidebar-contact-links,
+.info-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Botão de contorno (WhatsApp / Instagram): inverte as cores no hover, como os botões de seção */
+.sidebar-contact-links a,
+.info-links a {
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 16px;
+  border: 1px solid rgba(244, 241, 232, 0.5);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.sidebar-contact-links a:hover,
+.info-links a:hover {
+  background: #ecece8;
+  border-color: #ecece8;
+  color: #090b24;
+}
+
+.sidebar-contact-links a:focus-visible,
+.info-links a:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+/* View "Informações": rola na vertical, como a do Ensaio de Fotos */
+.info-view {
+  height: calc(100vh - var(--header-height));
+  height: calc(100dvh - var(--header-height));
+  overflow-y: auto;
+  padding: 44px 50px;
+}
+
+.info-heading {
+  min-height: 100px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.info-heading h1 {
+  margin: 12px 0 0;
+  font-family: Impact, "Arial Black", sans-serif;
+  font-size: clamp(42px, 4.5vw, 60px);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* Blocos em colunas que se ajustam à largura disponível (1 coluna no celular) */
+.info-content {
+  max-width: 980px;
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.info-block {
+  padding: 22px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+}
+
+.info-block h2 {
+  margin: 0 0 12px;
+  font-family: Impact, "Arial Black", sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.info-block p,
+.info-block li {
+  margin: 0;
+  color: #dcdde5;
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-line; /* respeita "\n" digitado nos textos de SITE_INFO */
+}
+
+.info-block ol,
+.info-block ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.info-block li + li {
+  margin-top: 6px;
+}
+
 /* ===================================== SEÇÃO 7: View "Ensaio de Fotos" ===================================== */
 /* Esta view rola na vertical (overflow-y: auto) quando as fotos passam da altura da tela */
 .photoshoot-view {
@@ -1730,6 +1852,18 @@ body.light-mode .detail-meta {
     border-bottom: 0;
   }
 
+  /* Contato deixa de ficar preso à base da barra lateral e vira o último item do painel do menu */
+  .sidebar-contact {
+    position: static;
+    padding: 16px;
+    border-top: 1px solid var(--line);
+  }
+
+  .sidebar-contact-links a,
+  .info-links a {
+    height: 44px; /* área de toque confortável */
+  }
+
   .side-section-button {
     height: 52px;
     padding: 0 16px;
@@ -1754,7 +1888,8 @@ body.light-mode .detail-meta {
   /* As três views passam a ter 100% da altura da área principal */
   .about-view,
   .catalog,
-  .photoshoot-view {
+  .photoshoot-view,
+  .info-view {
     height: 100%;
   }
 
@@ -1795,8 +1930,9 @@ body.light-mode .detail-meta {
     font-size: 11px;
   }
 
-  /* Ensaio de Fotos */
-  .photoshoot-view {
+  /* Ensaio de Fotos e Informações */
+  .photoshoot-view,
+  .info-view {
     padding: 28px 28px 40px;
     overflow-x: hidden; /* as fotos levemente giradas poderiam gerar rolagem horizontal */
   }
@@ -1914,8 +2050,13 @@ body.light-mode .detail-meta {
     padding: 26px 26px 44px;
   }
 
-  .photoshoot-view {
+  .photoshoot-view,
+  .info-view {
     padding: 26px 26px 36px;
+  }
+
+  .info-heading {
+    min-height: 72px;
   }
 
   .about-copy {

@@ -16,6 +16,7 @@
  *  - Renderizar a lista de produtos com filtro por texto digitado na busca
  *  - Abrir o detalhe do produto (galeria com miniaturas) e a tela de medidas
  *  - Gerar o link de compra pelo WhatsApp com mensagem pré-preenchida
+ *  - Montar os contatos da barra lateral e a view "Informações" a partir de SITE_INFO (renderStoreInfo)
  *  - Controlar o menu hambúrguer da versão mobile (abre/fecha com botão, Esc, clique fora ou ao escolher uma seção)
  *  - Controlar a intro animada (tempo, clique/tecla para pular, memória por sessão)
  */
@@ -31,6 +32,9 @@ const productDetail      = document.querySelector("#product-detail");       // C
 const aboutView          = document.querySelector("#about-view");           // View "Quem Somos"
 const catalogView        = document.querySelector("#catalog-view");         // View "Produtos" (catálogo)
 const photoshootView     = document.querySelector("#photoshoot-view");      // View "Ensaio de Fotos"
+const infoView           = document.querySelector("#info-view");            // View "Informações"
+const infoContent        = document.querySelector("#info-content");         // Container dos blocos da view "Informações" (preenchido por renderStoreInfo)
+const sidebarContact     = document.querySelector("#sidebar-contact");      // Links de contato no fim da barra lateral (preenchido por renderStoreInfo)
 const sideSectionButtons = document.querySelectorAll(".side-section-button"); // Botões de navegação da barra lateral (um por view)
 const brandButton        = document.querySelector(".brand");                // Logo da marca (clicar leva de volta ao "Quem Somos")
 const sidebar            = document.querySelector(".sidebar");              // Barra lateral (no celular vira a barra do topo; recebe a classe "menu-open")
@@ -39,6 +43,15 @@ const menuToggle         = document.querySelector(".menu-toggle");          // B
 // Número de WhatsApp da loja, no formato internacional (55 = Brasil, 47 = DDD) e sem símbolos.
 // É usado para montar o link wa.me de compra em getWhatsAppLink().
 const WHATSAPP_NUMBER = "5547997709664";
+
+// Informações da loja exibidas na barra lateral e na view "Informações".
+// Preencha os campos abaixo; o que ficar vazio simplesmente não aparece no site.
+const SITE_INFO = {
+  instagram : "aluzlab",   // usuário do Instagram, com ou sem @ (ex.: "aluz.streetwear") -> aparece um botão "Instagram"
+  payment   : [],   // formas de pagamento (ex.: ["Pix", "Cartão de crédito em até 3x"]) -> bloco "Pagamento"
+  shipping  : "",   // como e quanto tempo leva o envio (ex.: "Enviamos para todo o Brasil pelos Correios. Prazo e frete combinados no WhatsApp.") -> bloco "Envio"
+  returns   : ""    // política de trocas e devoluções (aceita "\n" para quebrar linha) -> bloco "Trocas e devoluções"
+};
 
 // ================================= STEP 2: Catálogo de produtos =================================
 /**
@@ -124,19 +137,19 @@ products.forEach((product) => {
 // ================================= STEP 4: Navegação entre views =================================
 
 /**
- * Exibe uma das três views do site e destaca o botão correspondente na barra lateral.
+ * Exibe uma das quatro views do site e destaca o botão correspondente na barra lateral.
  *
  * Usa o atributo `hidden` para mostrar apenas a view pedida. Ao entrar em "pronto-entrega"
  * (a view de Produtos), fecha qualquer detalhe aberto e redesenha a lista, de modo que
  * o usuário sempre veja o catálogo "limpo" ao voltar para a seção.
  *
  * Args:
- * @param {"quem-somos"|"pronto-entrega"|"ensaio-fotos"} viewName - Identificador da view (valor do `data-view` dos botões)
+ * @param {"quem-somos"|"pronto-entrega"|"ensaio-fotos"|"informacoes"} viewName - Identificador da view (valor do `data-view` dos botões)
  *
  * @returns {void}
  *
  * Side Effects:
- *  - Altera `hidden` das três views
+ *  - Altera `hidden` das quatro views
  *  - Alterna a classe `active` nos botões da barra lateral
  *  - Pode chamar closeProductDetail() e renderProducts() (que alteram o DOM)
  */
@@ -145,6 +158,7 @@ function showView(viewName) {
   aboutView.hidden = viewName !== "quem-somos";
   catalogView.hidden = viewName !== "pronto-entrega";
   photoshootView.hidden = viewName !== "ensaio-fotos";
+  infoView.hidden = viewName !== "informacoes";
 
   // Marca como ativo apenas o botão da barra lateral cuja view está aberta
   sideSectionButtons.forEach((button) => {
@@ -509,6 +523,74 @@ function renderProducts() {
     listingImage.addEventListener("click", () => openProductDetail(product));
   });
 }
+
+// ================================= STEP 8.1: Informações da loja e contato =================================
+
+/**
+ * Escapa caracteres especiais de HTML (&, <, >, ") de um texto vindo de SITE_INFO,
+ * para que ele seja exibido como texto e nunca interpretado como código.
+ *
+ * @param {string} text
+ * @returns {string}
+ */
+const escapeHTML = (text) =>
+  String(text).replace(/[&<>"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[char]));
+
+/**
+ * Monta os contatos da barra lateral e os blocos da view "Informações" a partir de SITE_INFO.
+ *
+ * - Barra lateral: botão de WhatsApp (sempre) e de Instagram (se `instagram` estiver preenchido).
+ * - View "Informações": "Como comprar" (sempre) e, só se preenchidos, "Pagamento", "Envio" e
+ *   "Trocas e devoluções"; no fim, os mesmos botões de contato.
+ *
+ * Roda uma vez, na carga da página.
+ *
+ * @returns {void}
+ *
+ * Side Effects:
+ *  - Reescreve o `innerHTML` de `sidebarContact` e de `infoContent`
+ */
+function renderStoreInfo() {
+  const linkAttrs = 'target="_blank" rel="noopener noreferrer"';
+  const instagram = SITE_INFO.instagram.trim().replace(/^@/, "");
+
+  // Botões de contato (reaproveitados na barra lateral e no fim da view "Informações")
+  const contactLinks = [
+    `<a href="https://wa.me/${WHATSAPP_NUMBER}" ${linkAttrs}>WhatsApp</a>`,
+    instagram ? `<a href="https://instagram.com/${encodeURIComponent(instagram)}" ${linkAttrs}>Instagram</a>` : ""
+  ].join("");
+
+  sidebarContact.innerHTML = `
+    <p class="sidebar-contact-title">Fale com a gente</p>
+    <div class="sidebar-contact-links">${contactLinks}</div>
+  `;
+
+  // Cada bloco é [título, HTML do conteúdo]; só entram os que têm informação
+  const blocks = [
+    ["Como comprar", `
+      <ol>
+        <li>Escolha a peça no catálogo.</li>
+        <li>Toque em “Comprar pelo WhatsApp”: a conversa abre já com o nome da peça.</li>
+        <li>Combinamos tamanho, pagamento e envio por lá.</li>
+      </ol>`]
+  ];
+  if (SITE_INFO.payment.length) {
+    blocks.push(["Pagamento", `<ul>${SITE_INFO.payment.map((item) => `<li>${escapeHTML(item)}</li>`).join("")}</ul>`]);
+  }
+  if (SITE_INFO.shipping.trim()) {
+    blocks.push(["Envio", `<p>${escapeHTML(SITE_INFO.shipping.trim())}</p>`]);
+  }
+  if (SITE_INFO.returns.trim()) {
+    blocks.push(["Trocas e devoluções", `<p>${escapeHTML(SITE_INFO.returns.trim())}</p>`]);
+  }
+  blocks.push(["Contato", `<div class="info-links">${contactLinks}</div>`]);
+
+  infoContent.innerHTML = blocks
+    .map(([title, body]) => `<section class="info-block"><h2>${title}</h2>${body}</section>`)
+    .join("");
+}
+
+renderStoreInfo();
 
 // ================================= STEP 9: Eventos e estado inicial =================================
 
