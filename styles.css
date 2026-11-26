@@ -1100,7 +1100,7 @@ button {
   margin: 0;
 }
 
-/* Botão de compra: link estilizado como pílula, na cor verde do WhatsApp (#25d366); no hover fica preenchido */
+/* Classe herdada do botão antigo de WhatsApp: hoje só estiliza o aviso "PEÇA VENDIDA". Os botões de compra são .cart-button e .buy-now-button (fim do arquivo) */
 .whatsapp-button {
   align-self: flex-start;
   display: inline-flex;
@@ -1124,7 +1124,7 @@ button {
 /* ------------------------------ Peça vendida ------------------------------
    Aplicado por script.js quando o produto tem soldOut: true. */
 
-/* Botão desativado no lugar de "COMPRAR PELO WHATSAPP": cinza, sem hover e sem cursor de clique */
+/* Botão desativado no lugar de "COLOCAR NO CARRINHO" / "COMPRAR JÁ": cinza, sem hover e sem cursor de clique */
 .whatsapp-button.is-sold-out,
 .whatsapp-button.is-sold-out:hover {
   border-color: rgba(255, 255, 255, 0.22);
@@ -2376,5 +2376,798 @@ body.light-mode .menu-pill:hover {
     opacity: 1;
     transform: none;
     filter: none;
+  }
+}
+
+/* ===================================== CARRINHO DE COMPRAS =====================================
+   Botões de compra, seletor de tamanho, aviso "no carrinho" e a view do carrinho.
+   A view reaproveita .info-view / .info-heading (altura, rolagem, título e paddings mobile). */
+
+/* Contador ao lado de "Carrinho" no menu: contorno que acompanha a cor do botão (também no hover/ativo) */
+.cart-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 18px;
+  margin-left: 10px;
+  padding: 0 5px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 10px;
+  line-height: 1;
+}
+
+.cart-badge[hidden] {
+  display: none;
+}
+
+/* "COLOCAR NO CARRINHO" (contorno) e "COMPRAR JÁ" (preenchido) */
+.buy-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: -4px 0 12px;
+}
+
+/* Nos cards os botões entram na mesma linha de "VER PRODUTO" */
+.listing-actions .buy-actions {
+  display: contents;
+}
+
+.detail-info .buy-actions {
+  margin: 0 0 16px;
+}
+
+.cart-button,
+.buy-now-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  margin: 0;
+  padding: 0 13px;
+  border: 1px solid #f4f1e8;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.cart-button {
+  background: transparent;
+  color: #f4f1e8;
+}
+
+.buy-now-button {
+  background: #f4f1e8;
+  color: #080808;
+}
+
+.cart-button:hover {
+  background: #f4f1e8;
+  color: #080808;
+}
+
+.buy-now-button:hover {
+  background: transparent;
+  color: #f4f1e8;
+}
+
+/* Seletor de tamanho (detalhe e medidas) */
+.size-picker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 14px;
+}
+
+.size-picker-label {
+  width: 100%;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.35px;
+  text-transform: uppercase;
+}
+
+.size-chip {
+  min-width: 42px;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 0;
+  background: transparent;
+  color: #f4f1e8;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.size-chip:hover {
+  border-color: #f4f1e8;
+}
+
+.size-chip.active {
+  border-color: #f4f1e8;
+  background: #f4f1e8;
+  color: #080808;
+}
+
+.size-hint,
+.cart-error {
+  margin: 0;
+  color: #ff7a6b;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.size-hint {
+  width: 100%;
+}
+
+.size-hint[hidden],
+.cart-error[hidden] {
+  display: none;
+}
+
+/* Aviso que aparece no canto da tela ao colocar uma peça no carrinho */
+.cart-toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: min(420px, calc(100vw - 32px));
+  padding: 12px 14px;
+  border: 1px solid #f4f1e8;
+  background: #101010;
+  box-shadow: 4px 4px 0 #f4f1e8;
+  color: #f4f1e8;
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+}
+
+.cart-toast.show {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+.cart-toast button {
+  flex: none;
+  height: 28px;
+  padding: 0 11px;
+  border: 0;
+  background: #f4f1e8;
+  color: #080808;
+  font-size: 9px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* View do carrinho: itens à esquerda, resumo fixo à direita */
+.cart-content {
+  max-width: 980px;
+  margin-top: 28px;
+}
+
+.cart-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 24px;
+  align-items: start;
+}
+
+.cart-items {
+  display: grid;
+  gap: 14px;
+}
+
+.cart-item {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  border: 1px solid var(--line);
+  background: var(--panel);
+}
+
+.cart-item-image {
+  position: relative;
+  min-height: 150px;
+  overflow: hidden;
+  background: #080808;
+}
+
+.cart-item-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cart-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+}
+
+.cart-item-info .detail-category {
+  margin: 0;
+}
+
+.cart-item-info h2 {
+  margin: 0;
+  font-family: Impact, "Arial Black", sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+
+.cart-size {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.cart-size select,
+.cart-name input {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 0;
+  background: #080808;
+  color: #f4f1e8;
+}
+
+.cart-size select {
+  height: 32px;
+  padding: 0 8px;
+  font-size: 12px;
+}
+
+.cart-item-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cart-qty {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.cart-qty button {
+  width: 36px;
+  height: 34px;
+  border: 0;
+  background: transparent;
+  color: #f4f1e8;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.cart-qty button:hover {
+  background: #f4f1e8;
+  color: #080808;
+}
+
+.cart-qty span {
+  min-width: 32px;
+  font-size: 13px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.cart-item-price {
+  font-size: 14px;
+}
+
+.cart-remove,
+.cart-link {
+  align-self: flex-start;
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.cart-remove:hover,
+.cart-link:hover {
+  color: #f4f1e8;
+}
+
+/* Resumo do pedido */
+.cart-summary {
+  position: sticky;
+  top: 0;
+  padding: 22px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+}
+
+.cart-summary h2 {
+  margin: 0 0 14px;
+  font-family: Impact, "Arial Black", sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.cart-summary dl {
+  margin: 0 0 18px;
+}
+
+.cart-summary dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+  color: #dcdde5;
+  font-size: 13px;
+}
+
+.cart-summary dd {
+  margin: 0;
+  font-weight: 700;
+  text-align: right;
+}
+
+.cart-summary .cart-total {
+  border-bottom: 0;
+  color: #f4f1e8;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.cart-name {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 14px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.cart-name input {
+  height: 40px;
+  padding: 0 10px;
+  font-size: 14px;
+  text-transform: none;
+}
+
+.cart-error {
+  margin-bottom: 12px;
+}
+
+.cart-checkout {
+  width: 100%;
+  min-height: 44px;
+  font-size: 12px;
+}
+
+.cart-note {
+  margin: 12px 0 14px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.cart-secondary {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 12px;
+}
+
+.cart-empty {
+  padding: 36px 0;
+}
+
+.cart-empty p {
+  margin: 0 0 18px;
+  font-size: 15px;
+}
+
+@media (max-width: 900px) {
+  .cart-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .cart-summary {
+    position: static;
+  }
+
+  /* Botões com texto legível e área de toque de 44px */
+  .cart-button,
+  .buy-now-button {
+    min-height: 44px;
+    font-size: 11px;
+  }
+
+  .listing-actions .cart-button,
+  .listing-actions .buy-now-button {
+    padding: 0 12px;
+  }
+
+  .size-chip {
+    min-width: 48px;
+    height: 44px;
+  }
+
+  .cart-qty button {
+    width: 44px;
+    height: 44px;
+  }
+
+  .cart-size select {
+    height: 44px;
+  }
+
+  .cart-remove,
+  .cart-link {
+    padding: 10px 0;
+  }
+
+  .cart-toast {
+    right: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    left: 16px;
+    max-width: none;
+    justify-content: space-between;
+  }
+
+  .cart-toast button {
+    height: 36px;
+  }
+}
+
+@media (max-width: 560px) {
+  .cart-item {
+    grid-template-columns: 96px minmax(0, 1fr);
+  }
+}
+
+/* ===================================== Frete (CEP) no resumo do carrinho ===================================== */
+.cart-shipping {
+  margin-bottom: 14px;
+}
+
+.cart-shipping label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.cart-shipping-row {
+  display: flex;
+  gap: 8px;
+}
+
+.cart-shipping-row input {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  padding: 0 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 0;
+  background: #080808;
+  color: #f4f1e8;
+  font-size: 14px;
+}
+
+.cart-shipping-button {
+  flex: none;
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid #f4f1e8;
+  border-radius: 0;
+  background: transparent;
+  color: #f4f1e8;
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.cart-shipping-button:hover:not(:disabled) {
+  background: #f4f1e8;
+  color: #080808;
+}
+
+.cart-shipping-button:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.cart-shipping-result {
+  min-height: 16px;
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.cart-shipping-result a {
+  color: var(--muted);
+  text-decoration: underline;
+}
+
+.cart-shipping-result a:hover {
+  color: #f4f1e8;
+}
+
+.cart-shipping-error {
+  color: #ff7a6b;
+  font-weight: 700;
+}
+
+/* ===================================== Tela de finalização (dados do cliente) ===================================== */
+.checkout-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.checkout-modal[hidden] {
+  display: none;
+}
+
+.checkout-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.82);
+}
+
+.checkout-card {
+  position: relative;
+  width: min(460px, 100%);
+  max-height: 100%;
+  overflow-y: auto;
+  padding: 28px 26px 24px;
+  border: 1px solid #f4f1e8;
+  background: #101010;
+  box-shadow: 6px 6px 0 #f4f1e8;
+  color: #f4f1e8;
+}
+
+.checkout-card h2 {
+  margin: 0 0 6px;
+  font-family: Impact, "Arial Black", sans-serif;
+  font-size: 30px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.checkout-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  background: transparent;
+  color: #f4f1e8;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.cart-shipping-row input:focus {
+  outline: 0;
+  border-color: #f4f1e8;
+}
+
+.checkout-total {
+  margin: 4px 0 14px;
+}
+
+.checkout-total div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.checkout-total dd {
+  margin: 0;
+}
+
+.checkout-error {
+  margin: 0 0 12px;
+  color: #ff7a6b;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.checkout-error[hidden] {
+  display: none;
+}
+
+.checkout-submit {
+  width: 100%;
+  min-height: 44px;
+  font-size: 12px;
+}
+
+.checkout-card .cart-note {
+  margin: 12px 0 0;
+}
+
+@media (max-width: 900px) {
+  /* 16px nos campos evita o zoom automático do iPhone ao tocar */
+  .cart-shipping-row input {
+    font-size: 16px;
+  }
+
+  .cart-shipping-row input,
+  .cart-shipping-button {
+    height: 44px;
+  }
+}
+
+@media (max-width: 560px) {
+  .checkout-modal {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .checkout-card {
+    width: 100%;
+    max-height: 100dvh;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    box-shadow: none;
+  }
+}
+
+
+/* ===================================== Tela de finalização: campos com rótulo flutuante ===================================== */
+.checkout-card {
+  width: min(560px, 100%);
+}
+
+.ck-heading {
+  margin: 18px 0 10px;
+  color: #f4f1e8;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.ck-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.ck-full {
+  grid-column: 1 / -1;
+}
+
+/* Endereço (largo) + Número (estreito) na mesma linha */
+.ck-grid:has(.ck-wide) {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.ck-grid:has(.ck-wide) .ck-field {
+  grid-column: span 3;
+}
+
+.ck-grid:has(.ck-wide) .ck-full {
+  grid-column: 1 / -1;
+}
+
+.ck-grid:has(.ck-wide) .ck-wide {
+  grid-column: span 4;
+}
+
+.ck-grid:has(.ck-wide) .ck-wide + .ck-field {
+  grid-column: span 2;
+}
+
+.ck-field {
+  position: relative;
+}
+
+.ck-field input {
+  width: 100%;
+  height: 50px;
+  padding: 18px 12px 4px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  background: #080808;
+  color: #f4f1e8;
+  font: inherit;
+  font-size: 14px;
+}
+
+.ck-field label {
+  position: absolute;
+  top: 16px;
+  left: 13px;
+  right: 12px;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  pointer-events: none;
+  transition: top 0.12s ease, font-size 0.12s ease;
+}
+
+/* Rótulo sobe e encolhe quando o campo está em foco ou preenchido */
+.ck-field input:focus + label,
+.ck-field input:not(:placeholder-shown) + label {
+  top: 7px;
+  font-size: 10px;
+}
+
+.ck-field input:focus {
+  outline: 0;
+  border-color: #f4f1e8;
+}
+
+/* Campos que vêm do cálculo do frete (não editáveis) */
+.ck-locked input {
+  border-style: dashed;
+  background: #151515;
+  color: #cfccc3;
+  cursor: not-allowed;
+}
+
+.ck-note {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .ck-field input {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 420px) {
+  .ck-grid:has(.ck-wide) .ck-field,
+  .ck-grid:has(.ck-wide) .ck-wide,
+  .ck-grid:has(.ck-wide) .ck-wide + .ck-field {
+    grid-column: 1 / -1;
   }
 }

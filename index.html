@@ -2,14 +2,15 @@
 <!--
   ALUZ — Streetwear da Rua (index.html)
 
-  Página única (SPA simples) da loja ALUZ. Este arquivo define apenas a ESTRUTURA do site;
+  Página única (SPA simples) da loja ALUZ, com carrinho de compras. Este arquivo define apenas a ESTRUTURA do site;
   a aparência fica em styles.css e o comportamento (navegação, catálogo, WhatsApp, intro) em script.js.
 
   Main functionality:
    - Intro animada de abertura (#intro), exibida uma vez por sessão
    - Barra lateral com logo, campo de busca e navegação entre as seções
    - Em telas até 900px a barra lateral vira uma barra no topo, com botão hambúrguer (.menu-toggle) que abre o menu (#sidebar-menu)
-   - Quatro views alternadas por script.js: "Quem Somos", "Produtos", "Ensaio de Fotos" e "Informações"
+   - Cinco views alternadas por script.js: "Quem Somos", "Produtos", "Carrinho", "Ensaio de Fotos" e "Informações"
+   - Carrinho (#cart-view): itens, tamanhos, quantidades, cálculo de frete por CEP e resumo montados por script.js em #cart-content; ao finalizar abre uma tela com os dados do cliente (nome, CPF, endereço, telefone) e o pedido segue para o WhatsApp
    - Contatos (#sidebar-contact) e conteúdo de "Informações" (#info-content) são montados por script.js a partir de SITE_INFO
    - Contêineres vazios (#product-grid e #product-detail) preenchidos dinamicamente com os produtos
 
@@ -44,8 +45,8 @@
     <!-- <meta property="og:url" content="https://SEU-DOMINIO.com.br/" /> -->
     <!-- <meta property="og:image" content="https://SEU-DOMINIO.com.br/fotos/og-aluz.jpg" /> -->
     <!-- <meta name="twitter:card" content="summary_large_image" /> -->
-    <!-- Folha de estilos; o "?v=16" é um número de versão para forçar o navegador a recarregar o CSS após mudanças -->
-    <link rel="stylesheet" href="styles.css?v=19" />
+    <!-- Folha de estilos; o "?v=20" é um número de versão para forçar o navegador a recarregar o CSS após mudanças -->
+    <link rel="stylesheet" href="styles.css?v=22" />
   </head>
   <body>
     <!-- ================================= INTRO: animação de abertura ================================= -->
@@ -101,6 +102,9 @@
 
           <button class="side-section-button" type="button" data-view="pronto-entrega">Produtos</button>
 
+          <!-- Carrinho: o contador (#cart-badge) é atualizado por script.js e some quando o carrinho está vazio -->
+          <button class="side-section-button" type="button" data-view="carrinho">Carrinho<span class="cart-badge" id="cart-badge" hidden>0</span></button>
+
           <button class="side-section-button" type="button" data-view="ensaio-fotos">Ensaio de Fotos</button>
 
           <button class="side-section-button" type="button" data-view="informacoes">Informações</button>
@@ -147,7 +151,15 @@
           <div class="product-grid" id="product-grid" aria-live="polite"></div>
         </section>
 
-        <!-- VIEW 3 — Ensaio de Fotos: galeria estática de 4 fotos, também oculta até ser selecionada -->
+        <!-- VIEW 3 — Carrinho: reaproveita o visual de "Informações"; o conteúdo é desenhado por renderCart() em script.js -->
+        <section class="info-view cart-view" id="cart-view" aria-labelledby="cart-title" hidden>
+          <div class="info-heading">
+            <h1 id="cart-title">Carrinho</h1>
+          </div>
+          <div class="cart-content" id="cart-content" aria-live="polite"></div>
+        </section>
+
+        <!-- VIEW 4 — Ensaio de Fotos: galeria estática de 4 fotos, também oculta até ser selecionada -->
         <section class="photoshoot-view" id="photoshoot-view" aria-labelledby="photoshoot-title" hidden>
           <div class="photoshoot-heading">
             <h1 id="photoshoot-title"><img class="photoshoot-title-image" src="fotos/Ensaio de Fotos.png" alt="Ensaio de fotos" /></h1>
@@ -173,7 +185,7 @@
           </div>
         </section>
 
-        <!-- VIEW 4 — Informações: como comprar, pagamento, envio e trocas (conteúdo vem de SITE_INFO em script.js) -->
+        <!-- VIEW 5 — Informações: como comprar, pagamento, envio e trocas (conteúdo vem de SITE_INFO em script.js) -->
         <section class="info-view" id="info-view" aria-labelledby="info-title" hidden>
           <div class="info-heading">
             <h1 id="info-title">Informações</h1>
@@ -183,7 +195,7 @@
       </main>
     </div>
 
-    <!-- Lógica do site; carregado no fim do body para que todos os elementos acima já existam. "?v=12" = versão para limpar o cache -->
-    <script src="script.js?v=15"></script>
+    <!-- Lógica do site; carregado no fim do body para que todos os elementos acima já existam. "?v=16" = versão para limpar o cache -->
+    <script src="script.js?v=18"></script>
   </body>
 </html>
